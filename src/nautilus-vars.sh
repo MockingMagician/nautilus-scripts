@@ -2,16 +2,21 @@
 
 tempFile=$(mktemp)
 
-
 echo "\$0:" >> ${tempFile}
 echo ${0} >> ${tempFile}
 
 echo "" >> ${tempFile}
 
-dir=$(dirname "${0}")
-dir=$(realpath "${dir}")
-echo "dir:" >> ${tempFile}
-echo ${dir} >> ${tempFile}
+scriptDirectory=$(dirname "${0}")
+scriptDirectory=$(realpath "${scriptDirectory}")
+echo "scriptDirectory:" >> ${tempFile}
+echo ${scriptDirectory} >> ${tempFile}
+
+echo "" >> ${tempFile}
+
+echo "pwd:" >> ${tempFile}
+pwd=$(pwd)
+echo ${pwd} >> ${tempFile}
 
 echo "" >> ${tempFile}
 

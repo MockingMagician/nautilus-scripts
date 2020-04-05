@@ -20,10 +20,9 @@ echo ${pwd} >> ${tempFile}
 
 echo "" >> ${tempFile}
 
+IFS=$'\n'
+
 echo "NAUTILUS_SCRIPT_SELECTED_FILE_PATHS:" >> ${tempFile}
-echo ${NAUTILUS_SCRIPT_SELECTED_FILE_PATHS} >> ${tempFile}
-
-
 for file in ${NAUTILUS_SCRIPT_SELECTED_FILE_PATHS}
    do
      echo ${file} >> ${tempFile}
@@ -32,7 +31,10 @@ done
 echo "" >> ${tempFile}
 
 echo "NAUTILUS_SCRIPT_SELECTED_URIS:" >> ${tempFile}
-echo ${NAUTILUS_SCRIPT_SELECTED_URIS} >> ${tempFile}
+for file in ${NAUTILUS_SCRIPT_SELECTED_URIS}
+   do
+     echo ${file} >> ${tempFile}
+done
 
 echo "" >> ${tempFile}
 

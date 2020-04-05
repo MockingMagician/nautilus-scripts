@@ -1,43 +1,57 @@
 #!/usr/bin/env bash
 
+# Get script directory
+scriptDir=$(dirname "${0}")
+scriptDir=$(realpath "${scriptDir}")
+
+# Imports
+. ${scriptDir}/.component/helper/getLineInVar.sh
+. ${scriptDir}/.component/helper/getPercent.sh
+
 pwd=$(pwd)
 tempFile=$(mktemp)
 term=$(zenity --entry --text="Terme à rechercher")
 
+IFS=$'\n'
+i=0
+
 (
 echo "# Recherche de pdf dans le dossier: ${pwd}"
 found=$(find "${pwd}" -name '*.pdf')
-while IFS= read -r file
+
+# Calculate number of file are selected
+nbOfFile=$(getLineInVar "${found}")
+
+for file in ${found}
     do
+    echo "# Recherche de correspondance dans le fichier: $(basename -- ${file})"
     text=$(pdftotext "${file}" -)
     grep=$(echo "${text}" | grep -i --color "${term}")
     if [[ -z "${grep}" ]]
-        then continue
+        then
+        i=$((${i} + 1))
+        percent=$(getPercent ${i} ${nbOfFile})
+        echo "${percent}"
+        continue
     fi
     echo -e "Found matches in file: "$(realpath "${file}")"\n" >> ${tempFile}
     echo "Matches:" >> ${tempFile}
-    while IFS= read -r match
+    for match in ${grep}
     do
         echo "=> "${match} >> ${tempFile}
-    done < <(printf '%s\n' "${grep}")
+    done
     echo -e "\n*** *** ***\n" >> ${tempFile}
-done < <(printf '%s\n' "${found}")
 
-echo "10" ; sleep 1
-echo "# Mise à jour des journaux de mail" ; sleep 1
-echo "20" ; sleep 1
-echo "# Remise à zéro des paramètres" ; sleep 1
-echo "50" ; sleep 1
-echo "Cette ligne est ignorée" ; sleep 1
-echo "75" ; sleep 1
-echo "# Redémarrage du système" ; sleep 1
-echo "100" ; sleep 1
+    i=$((${i} + 1))
+    percent=$(getPercent ${i} ${nbOfFile})
+    echo "${percent}"
+done
 ) |
 zenity --progress \
-  --title="Mise à jour des journaux système" \
-  --text="Analyse des journaux de mail..." \
+  --title="Recherche de terme dans PDF" \
   --percentage=0 \
-  --auto-kill
+  --auto-kill \
+  --auto-close
 
 if [[ "$?" = -1 ]]
     then

@@ -5,7 +5,9 @@ scriptDir=$(dirname "${0}")
 scriptDir=$(realpath "${scriptDir}")
 
 # Imports
+# shellcheck source=${scriptDir}/.component/helper/getLineInVar.sh
 . ${scriptDir}/.component/helper/getLineInVar.sh
+# shellcheck source=${scriptDir}/.component/helper/getPercent.sh
 . ${scriptDir}/.component/helper/getPercent.sh
 
 pwd=$(pwd)
@@ -34,16 +36,16 @@ for file in ${found}
         echo "${percent}"
         continue
     fi
-    echo -e "Found matches in file: "$(realpath "${file}")"\n" >> ${tempFile}
-    echo "Matches:" >> ${tempFile}
+    echo -e "Found matches in file: \"$(realpath "${file}")\"\n" >> "${tempFile}"
+    echo "Matches:" >> "${tempFile}"
     for match in ${grep}
     do
-        echo "=> "${match} >> ${tempFile}
+        echo "=> ${match}" >> "${tempFile}"
     done
-    echo -e "\n*** *** ***\n" >> ${tempFile}
+    echo -e "\n*** *** ***\n" >> "${tempFile}"
 
     i=$((${i} + 1))
-    percent=$(getPercent ${i} ${nbOfFile})
+    percent=$(getPercent "${i} ${nbOfFile}")
     echo "${percent}"
 done
 ) |
@@ -59,4 +61,4 @@ if [[ "$?" = -1 ]]
     return 0
 fi
 
-gedit ${tempFile}
+gedit "${tempFile}"
